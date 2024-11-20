@@ -1,10 +1,14 @@
 package projeto;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        String query = "Gravity Conjecture"; 
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Digite a substring para a busca:");
+        String query = scanner.nextLine();
+
         try (Socket socket = new Socket("localhost", 5001);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
