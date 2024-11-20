@@ -7,9 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DataProcessor {
+    private static final String BASE_PATH = "/Users/juliacorrea/eclipse-workspace/Sockets/bin/dados/";
+
     public static List<String> search(String fileName, String query) {
         List<String> results = new ArrayList<>();
-        try (FileInputStream inputStream = new FileInputStream("/Users/juliacorrea/eclipse-workspace/Sockets/bin/dados/" + fileName)) {
+        try (FileInputStream inputStream = new FileInputStream(BASE_PATH + fileName)) {
             String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
             JSONObject titles = json.getJSONObject("title");

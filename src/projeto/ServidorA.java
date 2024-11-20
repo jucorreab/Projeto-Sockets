@@ -1,4 +1,5 @@
 package projeto;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -19,7 +20,7 @@ public class ServidorA {
 
 class ServerAHandler implements Runnable {
     private final Socket clientSocket;
-    
+
     public ServerAHandler(Socket socket) {
         this.clientSocket = socket;
     }
@@ -30,23 +31,36 @@ class ServerAHandler implements Runnable {
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
             
             String query = in.readLine();
-            List<String> results = DataProcessor.search("data_A.json", query);
+            if (query == null || query.trim().isEmpty()) {
+                out.println("A consulta não pode estar vazia.");
+                return;
+            }
 
+            List<String> resultsA = DataProcessor.search("data_A.json", query);
+            out.println("Resultados do Servidor A:");
+            for (String result : resultsA) {
+                out.println(result);
+            }
+
+            List<String> resultsB = new ArrayList<>();
             try (Socket socketB = new Socket("localhost", 6000);
                  PrintWriter outB = new PrintWriter(socketB.getOutputStream(), true);
-                 BufferedReader inB = new BufferedReader(new InputStreamReader(socketB.getInputStream()))) { 
+                 BufferedReader inB = new BufferedReader(new InputStreamReader(socketB.getInputStream()))) {
+                
                 outB.println(query);
                 String line;
                 while ((line = inB.readLine()) != null) {
-                    results.add(line);
+                    resultsB.add(line);
                 }
             }
-            for (String result : results) {
+
+            out.println("Resultados do Servidor B:");
+            for (String result : resultsB) {
                 out.println(result);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
-

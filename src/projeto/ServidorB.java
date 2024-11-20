@@ -31,14 +31,23 @@ class ServerBHandler implements Runnable {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             
             String query = in.readLine();
-            List<String> results = DataProcessor.search("data_B.json", query);
-
-            for (String result : results) {
-                out.println(result);
+            if (query == null || query.trim().isEmpty()) {
+                out.println("A consulta não pode estar vazia.");
+                return;
             }
+
+            List<String> results = DataProcessor.search("data_B.json", query);
+            if (results.isEmpty()) {
+                out.println("Nenhum resultado encontrado no Servidor B.");
+            } else {
+                for (String result : results) {
+                    out.println(result);
+                }
+            }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
-
