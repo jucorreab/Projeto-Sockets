@@ -1,5 +1,5 @@
 package projeto;
-
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,15 +14,20 @@ public class DataProcessor {
         try (FileInputStream inputStream = new FileInputStream(BASE_PATH + fileName)) {
             String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
-            JSONObject titles = json.getJSONObject("title");
 
-            for (String key : titles.keySet()) {
-                String title = titles.getString(key);
-                if (title.toLowerCase().contains(query.toLowerCase())) {
-                    results.add(title);
+            if (json.has("title")) {
+                JSONObject titles = json.getJSONObject("title");
+
+                for (String key : titles.keySet()) {
+                    String title = titles.getString(key);
+                    if (title.toLowerCase().contains(query.toLowerCase())) {
+                        results.add(title);
+                    }
                 }
+            } else {
+                System.out.println("A chave 'title' não foi encontrada no arquivo " + fileName);
             }
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return results;
