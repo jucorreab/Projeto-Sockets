@@ -1,0 +1,2 @@
+# Ignorar arquivos de configurao do Eclipse .classpath .project # Ignorar configuraes do Eclipse IDE .settings/ # Ignorar arquivos do sistema 
+operacional (como o .DS_Store) .DS_Store # Ignorar a pasta bin (gerada pela compilao) bin/
