@@ -1,7 +1,11 @@
 package projeto;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ServidorA {
     public static void main(String[] args) {
@@ -35,7 +39,7 @@ class ServerAHandler implements Runnable {
                 return;
             }
 
-            List<String> resultsA = DataProcessor.search("data_A.json", query);
+            List<String> resultsA = search("data_A.json", query);
             out.println("Resultados do Servidor A:");
             for (String result : resultsA) {
                 out.println(result);
@@ -45,7 +49,7 @@ class ServerAHandler implements Runnable {
             try (Socket socketB = new Socket("localhost", 6000);
                  PrintWriter outB = new PrintWriter(socketB.getOutputStream(), true);
                  BufferedReader inB = new BufferedReader(new InputStreamReader(socketB.getInputStream()))) {
-                
+
                 outB.println(query);
                 String line;
                 while ((line = inB.readLine()) != null) {
@@ -61,5 +65,29 @@ class ServerAHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private List<String> search(String fileName, String query) {
+        List<String> results = new ArrayList<>();
+        try (FileInputStream inputStream = new FileInputStream("/Users/juliacorrea/eclipse-workspace/Sockets/bin/dados/" + fileName)) {
+            String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            JSONObject json = new JSONObject(content);
+
+            if (json.has("title")) {
+                JSONObject titles = json.getJSONObject("title");
+
+                for (String key : titles.keySet()) {
+                    String title = titles.getString(key);
+                    if (title.toLowerCase().contains(query.toLowerCase())) {
+                        results.add(title);
+                    }
+                }
+            } else {
+                System.out.println("A chave 'title' não foi encontrada no arquivo " + fileName);
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return results;
     }
 }
