@@ -1,4 +1,5 @@
 package projeto;
+
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +40,7 @@ class ServerBHandler implements Runnable {
                 return;
             }
 
-            List<String> results = search("data_B.json", query);
+            List<String> results = search("src/dados/data_B.json", query);
             if (results.isEmpty()) {
                 out.println("Nenhum resultado encontrado no Servidor B.");
             } else {
@@ -53,9 +54,9 @@ class ServerBHandler implements Runnable {
         }
     }
 
-    private List<String> search(String fileName, String query) {
+    private List<String> search(String filePath, String query) {
         List<String> results = new ArrayList<>();
-        try (FileInputStream inputStream = new FileInputStream("/Users/juliacorrea/eclipse-workspace/Sockets/bin/dados/" + fileName)) {
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
             String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
 
@@ -69,7 +70,7 @@ class ServerBHandler implements Runnable {
                     }
                 }
             } else {
-                System.out.println("A chave 'title' não foi encontrada no arquivo " + fileName);
+                System.out.println("A chave 'title' não foi encontrada no arquivo " + filePath);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
