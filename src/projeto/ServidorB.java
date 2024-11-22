@@ -17,7 +17,7 @@ public class ServidorB {
                 new Thread(new ServerBHandler(socket)).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao iniciar o servidor B: " + e.getMessage());
         }
     }
 }
@@ -33,7 +33,7 @@ class ServerBHandler implements Runnable {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            
+
             String query = in.readLine();
             if (query == null || query.trim().isEmpty()) {
                 out.println("A consulta não pode estar vazia.");
@@ -50,7 +50,7 @@ class ServerBHandler implements Runnable {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro de comunicação no servidor B: " + e.getMessage());
         }
     }
 
@@ -69,11 +69,9 @@ class ServerBHandler implements Runnable {
                         results.add(title);
                     }
                 }
-            } else {
-                System.out.println("A chave 'title' não foi encontrada no arquivo " + filePath);
             }
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao processar o arquivo " + filePath + ": " + e.getMessage());
         }
         return results;
     }

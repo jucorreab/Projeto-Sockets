@@ -17,7 +17,7 @@ public class ServidorA {
                 new Thread(new ServerAHandler(clientSocket)).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao iniciar o servidor A: " + e.getMessage());
         }
     }
 }
@@ -33,7 +33,7 @@ class ServerAHandler implements Runnable {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
-            
+
             String query = in.readLine();
             if (query == null || query.trim().isEmpty()) {
                 out.println("A consulta não pode estar vazia.");
@@ -41,9 +41,13 @@ class ServerAHandler implements Runnable {
             }
 
             List<String> resultsA = search("src/dados/data_A.json", query);
-            out.println("Resultados do Servidor A:");
-            for (String result : resultsA) {
-                out.println(result);
+            if (resultsA.isEmpty()) {
+                out.println("Nenhum resultado encontrado no Servidor A.");
+            } else {
+                out.println("Resultados do Servidor A:");
+                for (String result : resultsA) {
+                    out.println(result);
+                }
             }
 
             List<String> resultsB = new ArrayList<>();
@@ -58,13 +62,17 @@ class ServerAHandler implements Runnable {
                 }
             }
 
-            out.println("Resultados do Servidor B:");
-            for (String result : resultsB) {
-                out.println(result);
+            if (resultsB.isEmpty()) {
+                out.println("Nenhum resultado encontrado no Servidor B.");
+            } else {
+                out.println("Resultados do Servidor B:");
+                for (String result : resultsB) {
+                    out.println(result);
+                }
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro de comunicação no servidor A: " + e.getMessage());
         }
     }
 
@@ -83,11 +91,9 @@ class ServerAHandler implements Runnable {
                         results.add(title);
                     }
                 }
-            } else {
-                System.out.println("A chave 'title' não foi encontrada no arquivo " + filePath);
             }
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao processar o arquivo " + filePath + ": " + e.getMessage());
         }
         return results;
     }
