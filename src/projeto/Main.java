@@ -1,4 +1,5 @@
-/*package projeto;
+/* CLASSE UTILIZADA APENAS PARA TESTAR BIBLIOTECA JSON.
+package projeto;
 import org.json.JSONObject;
 
 public class Main {
