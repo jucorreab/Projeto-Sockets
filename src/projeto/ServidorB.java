@@ -59,14 +59,17 @@ class ServerBHandler implements Runnable {
         try (FileInputStream inputStream = new FileInputStream(filePath)) {
             String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
+            JSONObject titles = json.optJSONObject("title");
+            JSONObject labels = json.optJSONObject("label");
 
-            if (json.has("title")) {
-                JSONObject titles = json.getJSONObject("title");
-
+            if (titles != null) {
                 for (String key : titles.keySet()) {
                     String title = titles.getString(key);
-                    if (title.toLowerCase().contains(query.toLowerCase())) {
-                        results.add(title);
+                    String label = labels != null && labels.has(key) ? labels.getString(key) : "";
+                    String combined = title + " " + label;
+
+                    if (combined.toLowerCase().contains(query.toLowerCase())) {
+                        results.add("Título: " + title + (label.isEmpty() ? "" : " | Rótulo: " + label));
                     }
                 }
             }
